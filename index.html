@@ -1,0 +1,65 @@
+import React, { useState } from 'react';
+
+function ImageUpload() {
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImageUpload = async () => {
+    if (selectedImage) {
+      // Create a FormData object and append the selected image
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+
+      try {
+        // Send a POST request to your FastAPI backend for predictions
+        const response = await fetch('http://127.0.0.1:8000/docs#/default/endpoint_face_analytics_predict_post', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          // Handle the response and update your UI with the prediction result
+          const result = await response.json();
+          console.log(result);
+        } else {
+          // Handle errors
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        // Handle network or other errors
+        console.error('Error:', error.message);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setSelectedImage(e.target.files[0])}
+        style={{
+          // Inline CSS for input element
+          padding: '10px',
+          border: '2px solid #ccc',
+          borderRadius: '4px',
+        }}
+      />
+      <button
+        onClick={handleImageUpload}
+        style={{
+          // Inline CSS for button element
+          backgroundColor: '#007bff',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Upload Image
+      </button>
+    </div>
+  );
+}
+
+export default ImageUpload;
